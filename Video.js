@@ -120,6 +120,12 @@ export default class Video extends Component {
     }
   };
 
+  _onVideoBuffer = (event) => {
+    if (this.props.onVideoBuffer) {
+      this.props.onVideoBuffer(event.nativeEvent);
+    }
+  };
+
   _onBandwidthUpdate = (event) => {
     if (this.props.onBandwidthUpdate) {
       this.props.onBandwidthUpdate(event.nativeEvent);
@@ -284,6 +290,7 @@ export default class Video extends Component {
       onVideoLoad: this._onLoad,
       onVideoError: this._onError,
       onVideoProgress: this._onProgress,
+      onVideoBuffer: this._onVideoBuffer,
       onVideoSeek: this._onSeek,
       onVideoEnd: this._onEnd,
       onVideoBuffer: this._onBuffer,
@@ -357,6 +364,7 @@ Video.propTypes = {
   onVideoBuffer: PropTypes.func,
   onVideoError: PropTypes.func,
   onVideoProgress: PropTypes.func,
+  onVideoBuffer: PropTypes.func,
   onVideoBandwidthUpdate: PropTypes.func,
   onVideoSeek: PropTypes.func,
   onVideoEnd: PropTypes.func,

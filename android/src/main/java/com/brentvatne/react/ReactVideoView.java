@@ -58,6 +58,7 @@ public class ReactVideoView extends ScalableVideoView implements
         EVENT_LOAD("onVideoLoad"),
         EVENT_ERROR("onVideoError"),
         EVENT_PROGRESS("onVideoProgress"),
+        EVENT_BUFFER("onVideoBuffer"),
         EVENT_TIMED_METADATA("onTimedMetadata"),
         EVENT_SEEK("onVideoSeek"),
         EVENT_END("onVideoEnd"),
@@ -110,7 +111,9 @@ public class ReactVideoView extends ScalableVideoView implements
     private RCTEventEmitter mEventEmitter;
 
     private Handler mProgressUpdateHandler = new Handler();
+    private Handler mBufferUpdateHandler = new Handler();
     private Runnable mProgressUpdateRunnable = null;
+    private Runnable mBufferUpdateRunnable = null;
     private Handler videoControlHandler = new Handler();
     private MediaController mediaController;
 
@@ -166,6 +169,22 @@ public class ReactVideoView extends ScalableVideoView implements
 
                     // Check for update after an interval
                     mProgressUpdateHandler.postDelayed(mProgressUpdateRunnable, Math.round(mProgressUpdateInterval));
+                }
+            }
+        };
+
+        mBufferUpdateRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (mMediaPlayerValid && mPaused && !mBackgroundPaused) {
+                    WritableMap event = Arguments.createMap();
+                    event.putDouble(EVENT_PROP_CURRENT_TIME, mMediaPlayer.getCurrentPosition() / 1000.0);
+                    event.putDouble(EVENT_PROP_PLAYABLE_DURATION, mVideoBufferedDuration / 1000.0); //TODO:mBufferUpdateRunnable
+                    event.putDouble(EVENT_PROP_SEEKABLE_DURATION, mVideoDuration / 1000.0);
+                    mEventEmitter.receiveEvent(getId(), Events.EVENT_BUFFER.toString(), event);
+
+                    // Check for update after an interval
+                    mBufferUpdateHandler.postDelayed(mBufferUpdateRunnable, Math.round(mProgressUpdateInterval));
                 }
             }
         };
@@ -408,6 +427,9 @@ public class ReactVideoView extends ScalableVideoView implements
 
                 // Also Start the Progress Update Handler
                 mProgressUpdateHandler.post(mProgressUpdateRunnable);
+
+                
+                mBufferUpdateHandler.post(mBufferUpdateRunnable);
             }
         }
         setKeepScreenOn(!mPaused);
