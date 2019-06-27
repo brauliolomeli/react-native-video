@@ -709,15 +709,21 @@ class ReactExoplayerView extends FrameLayout implements
     }
 
     private void onBuffering(boolean buffering) {
-        if (isBuffering == buffering) {
-            return;
-        }
+        // if (isBuffering == buffering) {
+        //     return;
+        // }
 
-        isBuffering = buffering;
-        if (buffering) {
-            eventEmitter.buffering(true);
-        } else {
-            eventEmitter.buffering(false);
+        // isBuffering = buffering;
+        // if (buffering) {
+        //     eventEmitter.buffering(true);
+        // } else {
+        //     eventEmitter.buffering(false);
+        // }
+        if (player != null) {
+            long pos = player.getCurrentPosition();
+            long bufferedDuration = player.getBufferedPercentage() * player.getDuration() / 100;
+            eventEmitter.progressChanged(pos, bufferedDuration, player.getDuration());
+            eventEmitter.buffering(pos, bufferedDuration, player.getDuration());
         }
     }
 
