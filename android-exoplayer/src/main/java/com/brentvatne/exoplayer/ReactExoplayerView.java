@@ -613,6 +613,7 @@ class ReactExoplayerView extends FrameLayout implements
                 eventEmitter.ready();
                 // onBuffering(false);
                 startProgressHandler();
+                bufferHandler.sendEmptyMessage(SHOW_BUFFER);
                 videoLoaded();
                 //Setting the visibility for the playerControlView
                 if(playerControlView != null) {
