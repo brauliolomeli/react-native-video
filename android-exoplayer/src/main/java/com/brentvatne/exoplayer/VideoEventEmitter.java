@@ -193,9 +193,17 @@ class VideoEventEmitter {
         receiveEvent(EVENT_READY, null);
     }
 
-    void buffering(boolean isBuffering) {
+    // void buffering(boolean isBuffering) {
+    //     WritableMap map = Arguments.createMap();
+    //     map.putBoolean(EVENT_PROP_IS_BUFFERING, isBuffering);
+    //     receiveEvent(EVENT_BUFFER, map);
+    // }
+
+    void buffering(double currentPosition, double bufferedDuration, double seekableDuration) {
         WritableMap map = Arguments.createMap();
-        map.putBoolean(EVENT_PROP_IS_BUFFERING, isBuffering);
+        map.putDouble(EVENT_PROP_CURRENT_TIME, currentPosition / 1000D);
+        map.putDouble(EVENT_PROP_PLAYABLE_DURATION, bufferedDuration / 1000D);
+        map.putDouble(EVENT_PROP_SEEKABLE_DURATION, seekableDuration / 1000D);
         receiveEvent(EVENT_BUFFER, map);
     }
 
